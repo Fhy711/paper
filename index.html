@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+  /* 去掉iframe/embed默认边框 */
+  iframe, embed {
+    border: none;
+    width: 100%;
+    height: calc(100vh - 80px); /* 减去docsify顶部导航高度 */
+    display: block;
+  }
+  /* 隐藏docsify页面内的padding，让PDF贴边 */
+  .page {
+    padding: 0 !important;
+  }
+  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>我的在线文档</title>
