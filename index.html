@@ -1,6 +1,19 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+  <style>
+  /* 去掉iframe/embed默认边框 */
+  iframe, embed {
+    border: none;
+    width: 100%;
+    height: calc(100vh - 80px); /* 减去docsify顶部导航高度 */
+    display: block;
+  }
+  /* 隐藏docsify页面内的padding，让PDF贴边 */
+  .page {
+    padding: 0 !important;
+  }
+  </style>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF</title>
@@ -34,6 +47,7 @@
   <div id="pdf-viewer"><p class="pdf-loading">正在加载 PDF…</p></div>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
+<<<<<<< HEAD
     (function () {
       var PDF_URL = 'files/PLS-Template-Xinyue.pdf';
       var WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -99,6 +113,15 @@
         resizeTimer = setTimeout(renderAll, 200);
       });
     })();
+=======
+    window.$docsify = {
+      name: '我的文档',
+      repo: 'Fhy711/paper',
+      loadSidebar: true,  // 启用侧边栏
+      subMaxLevel: 3,     // 目录层级
+      search: 'auto'      // 搜索
+    }
+>>>>>>> origin/main
   </script>
 </body>
 </html>

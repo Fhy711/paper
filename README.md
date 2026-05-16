@@ -1,2 +1,2 @@
-# paper.github.io
+# paper
 文件在线展示
