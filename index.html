@@ -1,24 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>我的在线文档</title>
-  <!-- Docsify 核心 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
-  <!-- 搜索插件 -->
-  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+  <title>PDF</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      background: #525659;
+    }
+    #pdf-viewer {
+      width: 100%;
+    }
+    #pdf-viewer canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      margin: 0 auto 8px;
+    }
+    .pdf-loading,
+    .pdf-error {
+      color: #eee;
+      text-align: center;
+      padding: 48px 16px;
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+    }
+  </style>
 </head>
 <body>
-  <div id="app"></div>
+  <div id="pdf-viewer"><p class="pdf-loading">正在加载 PDF…</p></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
-    window.$docsify = {
-      name: '我的文档',
-      repo: 'Fhy711/paper.github.io',
-      loadSidebar: true,  // 启用侧边栏
-      subMaxLevel: 3,     // 目录层级
-      search: 'auto'      // 搜索
-    }
+    (function () {
+      var PDF_URL = 'files/PLS-Template-Xinyue.pdf';
+      var WORKER = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      var container = document.getElementById('pdf-viewer');
+      var pdfDoc = null;
+      var rendering = false;
+
+      pdfjsLib.GlobalWorkerOptions.workerSrc = WORKER;
+
+      function showError(msg) {
+        container.innerHTML = '<p class="pdf-error">' + msg + '</p>';
+      }
+
+      function renderPage(page, pageNum) {
+        var cssWidth = window.innerWidth;
+        var baseViewport = page.getViewport({ scale: 1 });
+        var scale = cssWidth / baseViewport.width;
+        var dpr = window.devicePixelRatio || 1;
+        var viewport = page.getViewport({ scale: scale * dpr });
+
+        var canvas = document.createElement('canvas');
+        canvas.setAttribute('data-page', pageNum);
+        var ctx = canvas.getContext('2d');
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+        canvas.style.width = cssWidth + 'px';
+        canvas.style.height = (viewport.height / dpr) + 'px';
+
+        container.appendChild(canvas);
+        return page.render({ canvasContext: ctx, viewport: viewport }).promise;
+      }
+
+      function renderAll() {
+        if (!pdfDoc || rendering) return;
+        rendering = true;
+        container.innerHTML = '';
+        var chain = Promise.resolve();
+        for (var i = 1; i <= pdfDoc.numPages; i++) {
+          (function (n) {
+            chain = chain.then(function () {
+              return pdfDoc.getPage(n).then(function (page) {
+                return renderPage(page, n);
+              });
+            });
+          })(i);
+        }
+        chain.finally(function () { rendering = false; });
+      }
+
+      pdfjsLib.getDocument(PDF_URL).promise
+        .then(function (pdf) {
+          pdfDoc = pdf;
+          container.innerHTML = '';
+          renderAll();
+        })
+        .catch(function (err) {
+          showError('PDF 加载失败：' + (err.message || err));
+        });
+
+      var resizeTimer;
+      window.addEventListener('resize', function () {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(renderAll, 200);
+      });
+    })();
   </script>
 </body>
 </html>
