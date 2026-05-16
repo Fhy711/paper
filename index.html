@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的在线文档</title>
+  <!-- Docsify 核心 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify@4"></script>
+  <!-- 搜索插件 -->
+  <script src="//cdn.jsdelivr.net/npm/docsify/lib/plugins/search.min.js"></script>
+</head>
+<body>
+  <div id="app"></div>
+  <script>
+    window.$docsify = {
+      name: '我的文档',
+      repo: 'Fhy711/paper.github.io',
+      loadSidebar: true,  // 启用侧边栏
+      subMaxLevel: 3,     // 目录层级
+      search: 'auto'      // 搜索
+    }
+  </script>
+</body>
+</html>
